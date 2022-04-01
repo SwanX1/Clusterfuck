@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="Apache-2.0"
+issueTrackerURL="https://infernalstudios.org"
+
+[[mods]]
+modId = "boom"
+version="${file.jarVersion}"
+displayName = "Boom"
+# updateJSONURL="https://infernalstudios.org/api/mods/boom/forge"
+displayURL="https://infernalstudios.org"
+# logoFile = ""
+credits = "Infernal Studios"
+authors = "Infernal Studios"
+description = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+'''
+
+[[dependencies.boom]]
+  modId="forge"
+  mandatory=true
+  versionRange="[40,)"
+  ordering="NONE"
+  side="BOTH"
+
+[[dependencies.boom]]
+  modId="minecraft"
+  mandatory = true
+  versionRange = "[1.18.2,1.19)"
+  ordering = "NONE"
+  side="BOTH"
