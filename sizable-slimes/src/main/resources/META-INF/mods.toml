@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="Apache-2.0"
+issueTrackerURL="https://infernalstudios.org"
+
+[[mods]]
+modId = "sizableslimes"
+version="${file.jarVersion}"
+displayName = "Sizable Slimes"
+# updateJSONURL="https://infernalstudios.org/api/mods/sizableslimes/forge"
+displayURL="https://infernalstudios.org"
+# logoFile = ""
+credits = "Infernal Studios"
+authors = "Infernal Studios"
+description = '''
+Sometimes slimes are annoying... especially in superflat worlds.
+This mod is here to make them even more annoying by making them bigger each time they jump!
+'''
+
+[[dependencies.sizableslimes]]
+  modId="forge"
+  mandatory=true
+  versionRange="[40,)"
+  ordering="NONE"
+  side="BOTH"
+
+[[dependencies.sizableslimes]]
+  modId="minecraft"
+  mandatory = true
+  versionRange = "[1.18.2,1.19)"
+  ordering = "NONE"
+  side="BOTH"

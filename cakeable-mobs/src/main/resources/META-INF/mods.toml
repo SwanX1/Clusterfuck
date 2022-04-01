@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="Apache-2.0"
+issueTrackerURL="https://infernalstudios.org"
+
+[[mods]]
+modId = "cakeablemobs"
+version="${file.jarVersion}"
+displayName = "Cakeable Mobs"
+# updateJSONURL="https://infernalstudios.org/api/mods/cakeablemobs/forge"
+displayURL="https://infernalstudios.org"
+# logoFile = ""
+credits = "Infernal Studios"
+authors = "Infernal Studios"
+description = '''
+Don't you ever wish you had easier enemies to fight? Would you like a small snack after a big fight?
+Your wishes have been granted with Cakeable Mobs!
+'''
+
+[[dependencies.cakeablemobs]]
+  modId="forge"
+  mandatory=true
+  versionRange="[40,)"
+  ordering="NONE"
+  side="BOTH"
+
+[[dependencies.cakeablemobs]]
+  modId="minecraft"
+  mandatory = true
+  versionRange = "[1.18.2,1.19)"
+  ordering = "NONE"
+  side="BOTH"

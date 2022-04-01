@@ -1,0 +1,141 @@
+buildscript {
+  repositories {
+    maven { url = 'https://files.minecraftforge.net/maven' }
+
+    jcenter()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
+  }
+}
+
+plugins { id 'com.github.johnrengelman.shadow' version '7.1.2' }
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+
+ext.defaultConfig = parseConfig(file('../build.properties'))
+ext.config = parseConfig(file('build.properties'))
+ext.config.MINECRAFT_VERSION = defaultConfig.MINECRAFT_VERSION
+ext.config.FORGE_VERSION = defaultConfig.FORGE_VERSION
+ext.config.MAPPINGS_CHANNEL = defaultConfig.MAPPINGS_CHANNEL
+ext.config.MAPPINGS_VERSION = defaultConfig.MAPPINGS_VERSION
+ext.config.CONFIG_LIB_VERSION = defaultConfig.CONFIG_LIB_VERSION
+ext.config.GROUP = defaultConfig.GROUP
+ext.config.AUTHOR = defaultConfig.AUTHOR
+
+project.version = config.VERSION
+project.group = "${config.GROUP}.${config.ARTIFACT}"
+project.archivesBaseName = "${config.ARCHIVES_BASE_NAME}-${config.MINECRAFT_VERSION}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+  mappings channel: config.MAPPINGS_CHANNEL, version: config.MAPPINGS_VERSION
+
+  runs {
+    client {
+      workingDirectory project.file('run')
+      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+      property 'forge.logging.console.level', 'debug'
+      mods {
+        mod {
+          source sourceSets.main
+        }
+      }
+    }
+
+    server {
+      workingDirectory project.file('run')
+      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+      property 'forge.logging.console.level', 'debug'
+      mods {
+        mod {
+          source sourceSets.main
+        }
+      }
+    }
+
+    data {
+      workingDirectory project.file('run')
+      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+      property 'forge.logging.console.level', 'debug'
+      args '--mod', 'mod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+      mods {
+        mod {
+          source sourceSets.main
+        }
+      }
+    }
+  }
+}
+
+configurations {
+  packIntoJar {
+    transitive = false
+  }
+}
+
+repositories {
+  maven {
+    url = config.CONFIG_LIB_VERSION.endsWith('SNAPSHOT') ? 'https://maven.infernalstudios.org/snapshots' : 'https://maven.infernalstudios.org/releases' 
+  }
+}
+
+dependencies {
+  minecraft "net.minecraftforge:forge:${config.MINECRAFT_VERSION}-${config.FORGE_VERSION}"
+  implementation "org.infernalstudios:config:${config.CONFIG_LIB_VERSION}"
+  packIntoJar "org.infernalstudios:config:${config.CONFIG_LIB_VERSION}"
+
+  if (project.name != 'common') {
+    implementation project(':common')
+    packIntoJar project(':common')
+  }
+}
+
+shadowJar {
+  classifier ''
+  configurations = [project.configurations.packIntoJar]
+  relocate 'org.infernalstudios.config', "${config.GROUP}.${config.ARTIFACT}.config.library"
+  if (project.name != 'common') {
+    relocate 'org.infernalstudios.clusterfuck', "${config.GROUP}.${config.ARTIFACT}.clusterfuck"
+  }
+}
+
+reobf {
+  shadowJar {}
+}
+
+jar {
+  classifier 'base'
+  finalizedBy 'reobfJar'
+
+  manifest {
+    attributes([
+      'Specification-Title'   : config.TITLE,
+      'Specification-Vendor'  : config.AUTHOR,
+      'Specification-Version' : '1',
+      'Implementation-Title'  : config.TITLE,
+      'Implementation-Version': config.VERSION,
+      'Implementation-Vendor' : config.AUTHOR,
+    ])
+  }
+}
+
+task sourcesJar(type: Jar) {
+  archiveClassifier.set('sources')
+  from sourceSets.main.allJava
+}
+
+tasks.build.dependsOn sourcesJar
+tasks.build.dependsOn shadowJar
+tasks.build.dependsOn reobfShadowJar
+
+def parseConfig(File config) {
+  config.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    return (new ConfigSlurper().parse(prop))
+  }
+}

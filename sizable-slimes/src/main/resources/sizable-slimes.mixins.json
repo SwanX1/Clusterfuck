@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.infernalstudios.sizableslimes.mixin",
+  "refmap": "sizable-slimes.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "AccessorSlime",
+    "MixinJumpControl"
+  ]
+}
